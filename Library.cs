@@ -82,7 +82,7 @@ namespace IntermediateProject
         }
         public User? RegisterUser(string? name)
         {
-            return IsNullOrEmpty(name)? null: new User(name, new List<Book?>());
+            return IsNullOrEmpty(name)? null: new User(name);
         }
         public bool BooksAreRented(List<Book> books)
         {

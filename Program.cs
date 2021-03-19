@@ -10,8 +10,8 @@ namespace IntermediateProject
             var book1 = new Book("Tom Sawyer", "Mark Twain");
             var book2 = new Book("The Little Prince", " Antoine de Saint-Exupéry");
 
-            var user1 = new User("Dejan Gvero", new List<Book?>());
-            var user2 = new User("Branislava Ceran", new List<Book?>());
+            var user1 = new User("Dejan Gvero");
+            var user2 = new User("Branislava Ceran");
 
             var library = new Library();
 
