@@ -10,19 +10,19 @@ namespace IntermediateProject
 {
     public class Library
     {
-        private List<Book> Books { get;}
-        public List<Book> ListOfAvailableBooks => Books.FindAll(b => b.IsRented == false);
-        public List<Book> ListOfRentedBooks => Books.FindAll(b => b.IsRented);       
-        private List<User> Users { get;}       
+        private List<Book> Books { get; }
+        public List<Book> AvailableBooks => Books.FindAll(b => !b.IsRented);
+        public List<Book> RentedBooks => Books.FindAll(b => b.IsRented);
+        private List<User> Users { get; }
 
         public Library()
         {
             Books = new List<Book>();
             Users = new List<User>();
         }
-        public void AddBook(Book book)
+        public void AddBook(Book? book)
         {
-            Books.Add(book);
+            if (book != null) Books.Add(book);
         }
         public void AddUser(User? user)
         {
@@ -31,10 +31,10 @@ namespace IntermediateProject
         public void RemoveBook(int? bookToRemoveId)
         {
             var bookToRemove = Books.FirstOrDefault(b => b.Id == bookToRemoveId);
-            Books.Remove(bookToRemove);
+            if (bookToRemove != null) Books.Remove(bookToRemove);
         }
 
-        private int? ValidateUserId()
+        private int? TryGetUserId()
         {
             Console.Clear();
             GetAllUsers();
@@ -46,52 +46,63 @@ namespace IntermediateProject
             }
             var success = int.TryParse(input, out var userid);
             if (!success) return null;
-            return CheckUserIdExist(userid, Users) == false ? (int?) null : userid;
+            return CheckUserIdExist(userid, Users) == false ? (int?)null : userid;
         }
 
         public void RemoveUser(int? userId)
         {
-            for (var i = 0; i < Users.Count; i++)
+            //for (var i = 0; i < Users.Count; i++)
+            //{
+            //    if (userId != Users[i].Id) continue;
+            //    foreach (var book in Books.Where(book => book.RentedBy == Users[i]))
+            //    {
+            //        book.RentedBy = null;
+            //        book.IsRented = false;
+            //    }
+            //    Users.Remove(Users[i]);
+            //}
+            var user = Users.FirstOrDefault(u => u.Id == userId);
+            var rentedBooksByUser = Books.Where(book => book.RentedBy == user);
+
+            foreach (var book in rentedBooksByUser)
             {
-                if (userId != Users[i].Id) continue;
-                foreach (var book in Books.Where(book => book.RentedBy == Users[i]))
-                {
-                    book.RentedBy = null;
-                    book.IsRented = false;
-                }
-                Users.Remove(Users[i]);
+                book.RentedBy = null;
+                book.IsRented = false;
             }
+
+            if (user != null) Users.Remove(user);
         }
         public bool CheckBookIdExist(int id, List<Book> books)
-        {            
+        {
             return books.Any(b => b.Id == id);
         }
         public bool CheckUserIdExist(int input, List<User> users)
         {
             return users.Any(u => u.Id == input);
         }
-        public Book RegisterBook(string? title, string? author)
+        public Book? RegisterBook(string? title, string? author)
         {
-            return new Book(title, author);
+            return title != null && author != null ? new Book(title, author) : null;
         }
         private string? ValidateInput(string context)
         {
+            Console.Clear();
             Console.Write("Enter [{0}] or [blank] for back: ", context);
             var value = Console.ReadLine().Trim();
             return IsNullOrEmpty(value) ? null : value;
         }
         public User? RegisterUser(string? name)
         {
-            return IsNullOrEmpty(name)? null: new User(name);
+            return IsNullOrEmpty(name) ? null : new User(name);
         }
         public bool BooksAreRented(List<Book> books)
         {
             return books.Any(b => b.IsRented);
-        }        
+        }
         public void ShowBooks(List<Book> books)
         {
             var builder = new StringBuilder();
-            if (books.All(b => b.IsRented == false))
+            if (books.All(b => !b.IsRented))
             {
                 builder.Append($" {"ID",-4} {"TITLE",-30}\n\n");
 
@@ -122,14 +133,14 @@ namespace IntermediateProject
         {
             return books.Find(b => b.Id == bookId);
         }
-        public User GetUser(int? userId)
+        public User? GetUser(int? userId)
         {
             return Users.Find(u => u.Id == userId)!;
         }
-        public void RentBook(Book? book, User? user)
-        {            
-            Console.WriteLine();            
-            if (book != null && book.IsRented)
+        public void RentBook(Book book, User user)
+        {
+            Console.WriteLine();
+            if (book.IsRented)
                 throw new InvalidOperationException("Can't rent rented book");
             if (book == null || user == null) return;
             user.ListOfRentedBooks.Add(book);
@@ -139,7 +150,7 @@ namespace IntermediateProject
         public void ReturnBook(Book? book)
         {
             Console.WriteLine();
-            if (book != null && book.IsRented == false)
+            if (book != null && !book.IsRented)
                 throw new InvalidOperationException("Can't return a non-rented book");
             if (book == null) return;
             book.IsRented = false;
@@ -161,6 +172,15 @@ namespace IntermediateProject
             if (!success) return null;
             return CheckBookIdExist(bookId, books) == false ? (int?)null : bookId;
         }
+        private void RentBook()
+        {
+            var user = GetUser(TryGetUserId());
+            var book = GetBook(ValidateBookInput(AvailableBooks), AvailableBooks);
+            if (user != null && book != null)
+            {
+                RentBook(book, user);
+            }
+        }
         public void BookMenu()
         {
             while (true)
@@ -181,17 +201,17 @@ namespace IntermediateProject
                         break;
                     case "3":
                         Console.Clear();
-                        ShowBooks(ListOfAvailableBooks);
+                        ShowBooks(AvailableBooks);
                         Console.Write("Press any key to go back");
                         Console.ReadLine();
                         Console.Clear();
                         break;
                     case "4":
-                        RentBook(GetBook(ValidateBookInput(ListOfAvailableBooks), ListOfAvailableBooks), GetUser(ValidateUserId()));
+                        RentBook();
                         Console.Clear();
                         break;
                     case "5":
-                        ReturnBook(GetBook(ValidateBookInput(ListOfRentedBooks), ListOfRentedBooks));
+                        ReturnBook(GetBook(ValidateBookInput(RentedBooks), RentedBooks));
                         break;
                     default:
                         Console.Clear();
@@ -199,12 +219,12 @@ namespace IntermediateProject
                 }
 
             }
-            
+
         }
         public void UserMenu()
         {
             while (true)
-            {                
+            {
                 GetAllUsers();
                 Console.Write("[1] Add User [2] Remove User [any] Back: ");
                 var userInput = Console.ReadLine();
@@ -217,7 +237,7 @@ namespace IntermediateProject
                         Console.Clear();
                         break;
                     case "2":
-                        RemoveUser(ValidateUserId());
+                        RemoveUser(TryGetUserId());
                         Console.Clear();
                         break;
                     default:
@@ -225,25 +245,25 @@ namespace IntermediateProject
                         return;
                 }
             }
-        }        
+        }
         public void Run()
-        {            
+        {
             while (true)
             {
                 Console.WriteLine();
                 Console.Write("[1] Books [2] Users [any] Exit: ");
-                var input = Console.ReadLine();                                                     
+                var input = Console.ReadLine();
                 Console.WriteLine();
                 switch (input)
                 {
                     case "1":
-                        Console.Clear();                        
+                        Console.Clear();
                         BookMenu();
                         break;
                     case "2":
-                        Console.Clear();                        
+                        Console.Clear();
                         UserMenu();
-                        break;                       
+                        break;
                     default:
                         Console.Write("Exiting");
                         Thread.Sleep(500);

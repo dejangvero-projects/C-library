@@ -22,10 +22,6 @@ namespace IntermediateProject
             library.AddUser(user2);            
 
             library.Run();
-            
-
-
-
         }
     }
 }
