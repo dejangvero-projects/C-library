@@ -194,6 +194,11 @@ namespace IntermediateProject
         {
             var builder = new StringBuilder();
             builder.Append($" {"ID",-4} {"BOOK TITLE",-30} {"USER RENTING",-40} {"DATE RENTED",-50}\n\n");
+            if (Rentals.Count == 0)
+            {
+                builder.Append("\n");
+                builder.Append($" {" ", -4} {" ", -25 } {"There aren't any rentals at the moment",-35} \n\n");
+            }
             foreach (var rent in Rentals)
             {
                 builder.Append($" {rent.Id,-4} {rent.RentedBook.Title,-30} {rent.RentedBy.Name,-40} {rent.RentingDate,-50}\n");
@@ -262,7 +267,6 @@ namespace IntermediateProject
 
         public void ReturnBook(Book? book)
         {
-            Console.WriteLine();
             if (book != null && !book.IsRented)
                 throw new InvalidOperationException("Can't return a non-rented book");
             if (book == null) return;
@@ -295,13 +299,13 @@ namespace IntermediateProject
                 RentBook(book, user);
             }
         }
-        private void AddAuthorToBook(Book? book, Author? author)
+        private static void AddAuthorToBook(Book? book, Author? author)
         {
             if (book == null || author == null) return;
             if (!book.Authors.Contains(author)) book.Authors.Add(author);
         }
 
-        private void RemoveAuthorFromBook(Book? book, Author? author)
+        private static void RemoveAuthorFromBook(Book? book, Author? author)
         {
             if (book == null || author == null) return;
             if (book.Authors.Contains(author)) book.Authors.Remove(author);
