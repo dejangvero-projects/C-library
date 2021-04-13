@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,12 +16,14 @@ namespace IntermediateProject
         public List<Book> RentedBooks => Books.FindAll(b => b.IsRented);
         private List<User> Users { get; }
         private List<Author> Authors { get; }
+        private List<Rental> Rentals { get; }
 
         public Library()
         {
             Books = new List<Book>();
             Users = new List<User>();
             Authors = new List<Author>();
+            Rentals = new List<Rental>();
         }
         public void AddBook(Book? book)
         {
@@ -187,6 +190,16 @@ namespace IntermediateProject
             }
             Console.WriteLine($"\n{builder}");
         }
+        public void ShowRentals()
+        {
+            var builder = new StringBuilder();
+            builder.Append($" {"ID",-4} {"BOOK TITLE",-30} {"USER RENTING",-40} {"DATE RENTED",-50}\n\n");
+            foreach (var rent in Rentals)
+            {
+                builder.Append($" {rent.Id,-4} {rent.RentedBook.Title,-30} {rent.RentedBy.Name,-40} {rent.RentingDate,-50}\n");
+            }
+            Console.WriteLine($"\n{builder}");
+        }
         public void GetAllUsers()
         {
             var builder = new StringBuilder();
@@ -238,7 +251,15 @@ namespace IntermediateProject
             user.RentedBooks.Add(book);
             book.IsRented = true;
             book.RentedBy = user;
+            var rental = new Rental(book, user);
+            Rentals.Add(rental);
         }
+
+        private Rental GetRentalWithBook(Book? book)
+        {
+            return Rentals.FirstOrDefault(r => r.RentedBook == book);
+        }
+
         public void ReturnBook(Book? book)
         {
             Console.WriteLine();
@@ -247,6 +268,7 @@ namespace IntermediateProject
             if (book == null) return;
             book.IsRented = false;
             book.RentedBy = null;
+            Rentals.Remove(GetRentalWithBook(book));
         }
         private int? ValidateBookInput(List<Book> books)
         {
@@ -390,7 +412,7 @@ namespace IntermediateProject
             while (true)
             {
                 Console.WriteLine();
-                Console.Write("[1] Books [2] Users [3] Authors [any] Exit: ");
+                Console.Write("[1] Books [2] Users [3] Authors [4] Rentals [any] Exit: ");
                 var input = Console.ReadLine();
                 Console.WriteLine();
                 switch (input)
@@ -406,6 +428,13 @@ namespace IntermediateProject
                     case "3":
                         Console.Clear();
                         AuthorMenu();
+                        break;
+                    case "4":
+                        Console.Clear();
+                        ShowRentals();
+                        Console.Write("Press any key to go back");
+                        Console.ReadLine();
+                        Console.Clear();
                         break;
                     default:
                         Console.Write("Exiting");
