@@ -4,10 +4,10 @@ C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\bin\Debug\net
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\bin\Debug\netcoreapp3.1\IntermediateProject.runtimeconfig.dev.json
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\bin\Debug\netcoreapp3.1\IntermediateProject.dll
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\bin\Debug\netcoreapp3.1\IntermediateProject.pdb
-C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.csprojAssemblyReference.cache
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.AssemblyInfoInputs.cache
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.AssemblyInfo.cs
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.csproj.CoreCompileInputs.cache
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.dll
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.pdb
 C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.genruntimeconfig.cache
+C:\Users\Dejan\source\repos\CSharpIntermediate\IntermediateProject\obj\Debug\netcoreapp3.1\IntermediateProject.csprojAssemblyReference.cache
